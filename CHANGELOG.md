@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-10-16
+
 ## [1.0.0] - 2026-10-16
 
 ### Added
@@ -37,5 +39,6 @@ the notes of the version's GitHub Release.
 - Cloud transport badge: devices Hive reports offline show as unreachable.
 - English, French, German and Spanish texts and documentation.
 
-[Unreleased]: https://github.com/gboulvin/Gladys-Hive/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/gboulvin/Gladys-Hive/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/gboulvin/Gladys-Hive/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/gboulvin/Gladys-Hive/releases/tag/v1.0.0
