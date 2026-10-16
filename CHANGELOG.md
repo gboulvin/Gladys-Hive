@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-16
+
 ### Added
 
 - Hive account login (AWS Cognito SRP), with the SMS code confirmation and a
@@ -35,4 +37,5 @@ the notes of the version's GitHub Release.
 - Cloud transport badge: devices Hive reports offline show as unreachable.
 - English, French, German and Spanish texts and documentation.
 
-[Unreleased]: https://github.com/gboulvin/Gladys-Hive/commits/main
+[Unreleased]: https://github.com/gboulvin/Gladys-Hive/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/gboulvin/Gladys-Hive/releases/tag/v1.0.0
