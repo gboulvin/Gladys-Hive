@@ -1,0 +1,923 @@
+{
+  "manifest_version": 1,
+  "type": "device",
+  "name": "Hive",
+  "description": {
+    "en": "Control Hive heating, hot water, lights, plugs and sensors from Gladys.",
+    "fr": "Pilotez chauffage, eau chaude, lampes, prises et capteurs Hive depuis Gladys.",
+    "de": "Steuern Sie Hive-Heizung, Warmwasser, Lampen, Steckdosen und Sensoren.",
+    "es": "Controle la calefacción, el agua caliente, luces, enchufes y sensores Hive."
+  },
+  "version": "1.0.0",
+  "docker_image": "ghcr.io/gboulvin/gladys-hive:1.0.0",
+  "gladys_version": ">=5.1.0",
+  "cover_image": "https://raw.githubusercontent.com/gboulvin/Gladys-Hive/main/cover.png",
+  "categories": ["climate", "lighting", "security"],
+  "transports": ["cloud"],
+  "config_schema": [
+    {
+      "key": "intro",
+      "type": "section",
+      "label": {
+        "en": "Your Hive account",
+        "fr": "Votre compte Hive",
+        "de": "Ihr Hive-Konto",
+        "es": "Su cuenta Hive"
+      },
+      "description": {
+        "en": "Sign in with the email and password of the Hive app. Hive usually confirms a new login with a code sent by SMS: when the connection status asks for it, type the code below and save within 3 minutes. Gladys is then remembered by your Hive account and no longer needs a code.",
+        "fr": "Connectez-vous avec l'e-mail et le mot de passe de l'application Hive. Hive confirme généralement une nouvelle connexion par un code envoyé par SMS : quand l'état de connexion le demande, saisissez le code ci-dessous et enregistrez sous 3 minutes. Gladys est ensuite mémorisé par votre compte Hive et n'a plus besoin de code.",
+        "de": "Melden Sie sich mit der E-Mail-Adresse und dem Passwort der Hive-App an. Hive bestätigt eine neue Anmeldung meist mit einem per SMS gesendeten Code: Wenn der Verbindungsstatus danach fragt, geben Sie den Code unten ein und speichern Sie innerhalb von 3 Minuten. Danach merkt sich Ihr Hive-Konto Gladys und braucht keinen Code mehr.",
+        "es": "Inicie sesión con el correo electrónico y la contraseña de la aplicación Hive. Hive suele confirmar un nuevo inicio de sesión con un código enviado por SMS: cuando el estado de conexión lo pida, escriba el código abajo y guarde en menos de 3 minutos. Después, su cuenta Hive recuerda Gladys y ya no necesita código."
+      },
+      "links": [
+        {
+          "url": "https://my.hivehome.com/",
+          "label": {
+            "en": "Hive web app",
+            "fr": "Application web Hive",
+            "de": "Hive-Web-App",
+            "es": "Aplicación web de Hive"
+          }
+        }
+      ]
+    },
+    {
+      "key": "username",
+      "type": "string",
+      "label": {
+        "en": "Hive email",
+        "fr": "E-mail Hive",
+        "de": "Hive-E-Mail",
+        "es": "Correo electrónico de Hive"
+      },
+      "placeholder": {
+        "en": "e.g. me@example.com",
+        "fr": "ex. moi@exemple.fr",
+        "de": "z. B. ich@beispiel.de",
+        "es": "p. ej. yo@ejemplo.es"
+      },
+      "required": true
+    },
+    {
+      "key": "password",
+      "type": "secret",
+      "label": {
+        "en": "Hive password",
+        "fr": "Mot de passe Hive",
+        "de": "Hive-Passwort",
+        "es": "Contraseña de Hive"
+      },
+      "required": true
+    },
+    {
+      "key": "sms_code",
+      "type": "string",
+      "label": {
+        "en": "SMS code",
+        "fr": "Code SMS",
+        "de": "SMS-Code",
+        "es": "Código SMS"
+      },
+      "description": {
+        "en": "Only when the connection status asks for it: the code Hive sent by SMS.",
+        "fr": "Seulement si l'état de connexion le demande : le code envoyé par SMS par Hive.",
+        "de": "Nur wenn der Verbindungsstatus danach fragt: der von Hive per SMS gesendete Code.",
+        "es": "Solo si el estado de conexión lo pide: el código que Hive envió por SMS."
+      },
+      "placeholder": {
+        "en": "e.g. 123456",
+        "fr": "ex. 123456",
+        "de": "z. B. 123456",
+        "es": "p. ej. 123456"
+      },
+      "required": false
+    },
+    {
+      "key": "poll_frequency",
+      "type": "number",
+      "label": {
+        "en": "Refresh interval (s)",
+        "fr": "Intervalle de rafraîchissement (s)",
+        "de": "Aktualisierungsintervall (s)",
+        "es": "Intervalo de actualización (s)"
+      },
+      "description": {
+        "en": "How often Gladys reads the Hive cloud. Sensors are seen with this delay.",
+        "fr": "Fréquence de lecture du cloud Hive. Les capteurs sont vus avec ce délai.",
+        "de": "Wie oft Gladys die Hive-Cloud liest. Sensoren werden mit dieser Verzögerung erkannt.",
+        "es": "Frecuencia de lectura de la nube Hive. Los sensores se ven con este retraso."
+      },
+      "required": false,
+      "default": 60,
+      "min": 30,
+      "max": 3600
+    },
+    {
+      "key": "boost_duration",
+      "type": "number",
+      "label": {
+        "en": "Default boost duration (min)",
+        "fr": "Durée du boost par défaut (min)",
+        "de": "Standard-Boost-Dauer (Min.)",
+        "es": "Duración del boost por defecto (min)"
+      },
+      "required": false,
+      "default": 30,
+      "min": 15,
+      "max": 360
+    },
+    {
+      "key": "boost_temperature",
+      "type": "number",
+      "label": {
+        "en": "Default heating boost temperature (°C)",
+        "fr": "Température du boost chauffage par défaut (°C)",
+        "de": "Standard-Boost-Temperatur Heizung (°C)",
+        "es": "Temperatura del boost de calefacción por defecto (°C)"
+      },
+      "required": false,
+      "default": 21,
+      "min": 5,
+      "max": 32
+    },
+    {
+      "key": "battery_low_threshold",
+      "type": "number",
+      "label": {
+        "en": "Low battery threshold (%)",
+        "fr": "Seuil de batterie faible (%)",
+        "de": "Schwelle für schwache Batterie (%)",
+        "es": "Umbral de batería baja (%)"
+      },
+      "required": false,
+      "default": 20,
+      "min": 5,
+      "max": 50
+    }
+  ],
+  "actions": [
+    {
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "key": "refresh_devices",
+      "label": {
+        "en": "Refresh the Hive devices",
+        "fr": "Actualiser les appareils Hive",
+        "de": "Hive-Geräte aktualisieren",
+        "es": "Actualizar los dispositivos Hive"
+      },
+      "timeout_seconds": 60
+    },
+    {
+      "key": "forget_session",
+      "label": {
+        "en": "Forget the Hive session",
+        "fr": "Oublier la session Hive",
+        "de": "Hive-Sitzung vergessen",
+        "es": "Olvidar la sesión de Hive"
+      },
+      "timeout_seconds": 60
+    }
+  ],
+  "scene_triggers": [
+    {
+      "key": "motion_detected",
+      "label": {
+        "en": "Hive motion detected",
+        "fr": "Mouvement détecté (Hive)",
+        "de": "Hive-Bewegung erkannt",
+        "es": "Movimiento detectado (Hive)"
+      },
+      "description": {
+        "en": "A Hive motion sensor saw something move.",
+        "fr": "Un détecteur de mouvement Hive a vu quelque chose bouger.",
+        "de": "Ein Hive-Bewegungsmelder hat eine Bewegung erkannt.",
+        "es": "Un sensor de movimiento Hive ha detectado movimiento."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Sensor",
+            "fr": "Détecteur",
+            "de": "Sensor",
+            "es": "Sensor"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Sensor name",
+            "fr": "Nom du détecteur",
+            "de": "Name des Sensors",
+            "es": "Nombre del sensor"
+          }
+        }
+      ]
+    },
+    {
+      "key": "contact_changed",
+      "label": {
+        "en": "Hive door or window",
+        "fr": "Porte ou fenêtre (Hive)",
+        "de": "Hive-Tür oder -Fenster",
+        "es": "Puerta o ventana (Hive)"
+      },
+      "description": {
+        "en": "A Hive window or door sensor opened or closed.",
+        "fr": "Un capteur d'ouverture Hive s'est ouvert ou fermé.",
+        "de": "Ein Hive-Tür-/Fenstersensor wurde geöffnet oder geschlossen.",
+        "es": "Un sensor de puerta o ventana Hive se ha abierto o cerrado."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Sensor",
+            "fr": "Capteur",
+            "de": "Sensor",
+            "es": "Sensor"
+          }
+        },
+        {
+          "key": "state",
+          "type": "multi_select",
+          "label": {
+            "en": "Change",
+            "fr": "Changement",
+            "de": "Änderung",
+            "es": "Cambio"
+          },
+          "options": [
+            {
+              "value": "open",
+              "label": {
+                "en": "Opened",
+                "fr": "Ouverture",
+                "de": "Geöffnet",
+                "es": "Abierto"
+              }
+            },
+            {
+              "value": "closed",
+              "label": {
+                "en": "Closed",
+                "fr": "Fermeture",
+                "de": "Geschlossen",
+                "es": "Cerrado"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Sensor name",
+            "fr": "Nom du capteur",
+            "de": "Name des Sensors",
+            "es": "Nombre del sensor"
+          }
+        }
+      ]
+    },
+    {
+      "key": "boost_ended",
+      "label": {
+        "en": "Hive boost ended",
+        "fr": "Fin du boost Hive",
+        "de": "Hive-Boost beendet",
+        "es": "Fin del boost Hive"
+      },
+      "description": {
+        "en": "A heating or hot water boost ended (timer elapsed or cancelled in the Hive app).",
+        "fr": "Un boost du chauffage ou de l'eau chaude s'est terminé (minuterie écoulée ou annulé dans l'app Hive).",
+        "de": "Ein Heizungs- oder Warmwasser-Boost ist beendet (Zeit abgelaufen oder in der Hive-App abgebrochen).",
+        "es": "Un boost de calefacción o agua caliente ha terminado (tiempo agotado o cancelado en la app Hive)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Zone",
+            "fr": "Zone",
+            "de": "Zone",
+            "es": "Zona"
+          }
+        },
+        {
+          "key": "kind",
+          "type": "multi_select",
+          "label": {
+            "en": "Boost of",
+            "fr": "Boost de",
+            "de": "Boost von",
+            "es": "Boost de"
+          },
+          "options": [
+            {
+              "value": "heating",
+              "label": {
+                "en": "Heating",
+                "fr": "Chauffage",
+                "de": "Heizung",
+                "es": "Calefacción"
+              }
+            },
+            {
+              "value": "hot_water",
+              "label": {
+                "en": "Hot water",
+                "fr": "Eau chaude",
+                "de": "Warmwasser",
+                "es": "Agua caliente"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Zone name",
+            "fr": "Nom de la zone",
+            "de": "Name der Zone",
+            "es": "Nombre de la zona"
+          }
+        }
+      ]
+    },
+    {
+      "key": "connectivity_changed",
+      "label": {
+        "en": "Hive device online / offline",
+        "fr": "Appareil Hive en / hors ligne",
+        "de": "Hive-Gerät online / offline",
+        "es": "Dispositivo Hive en línea / sin conexión"
+      },
+      "description": {
+        "en": "Hive lost or found a device again (unplugged bulb, flat battery, hub down).",
+        "fr": "Hive a perdu ou retrouvé un appareil (ampoule débranchée, pile vide, hub coupé).",
+        "de": "Hive hat ein Gerät verloren oder wiedergefunden (Lampe getrennt, Batterie leer, Hub aus).",
+        "es": "Hive ha perdido o recuperado un dispositivo (bombilla desenchufada, pila agotada, hub apagado)."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        },
+        {
+          "key": "state",
+          "type": "multi_select",
+          "label": {
+            "en": "Change",
+            "fr": "Changement",
+            "de": "Änderung",
+            "es": "Cambio"
+          },
+          "options": [
+            {
+              "value": "offline",
+              "label": {
+                "en": "Went offline",
+                "fr": "Passé hors ligne",
+                "de": "Offline gegangen",
+                "es": "Se ha desconectado"
+              }
+            },
+            {
+              "value": "online",
+              "label": {
+                "en": "Back online",
+                "fr": "De retour en ligne",
+                "de": "Wieder online",
+                "es": "De nuevo en línea"
+              }
+            }
+          ]
+        }
+      ],
+      "variables": [
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l'appareil",
+            "de": "Name des Geräts",
+            "es": "Nombre del dispositivo"
+          }
+        }
+      ]
+    },
+    {
+      "key": "battery_low",
+      "label": {
+        "en": "Hive battery low",
+        "fr": "Batterie Hive faible",
+        "de": "Hive-Batterie schwach",
+        "es": "Batería Hive baja"
+      },
+      "description": {
+        "en": "A Hive battery dropped below the threshold of the configuration.",
+        "fr": "Une batterie Hive est passée sous le seuil de la configuration.",
+        "de": "Eine Hive-Batterie ist unter die Schwelle der Konfiguration gefallen.",
+        "es": "Una batería Hive ha bajado del umbral de la configuración."
+      },
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Device",
+            "fr": "Appareil",
+            "de": "Gerät",
+            "es": "Dispositivo"
+          }
+        }
+      ],
+      "variables": [
+        {
+          "key": "battery",
+          "type": "number",
+          "label": {
+            "en": "Battery (%)",
+            "fr": "Batterie (%)",
+            "de": "Batterie (%)",
+            "es": "Batería (%)"
+          }
+        },
+        {
+          "key": "device_name",
+          "type": "string",
+          "label": {
+            "en": "Device name",
+            "fr": "Nom de l'appareil",
+            "de": "Name des Geräts",
+            "es": "Nombre del dispositivo"
+          }
+        }
+      ]
+    }
+  ],
+  "scene_actions": [
+    {
+      "key": "boost_heating",
+      "label": {
+        "en": "Boost the Hive heating",
+        "fr": "Booster le chauffage Hive",
+        "de": "Hive-Heizung boosten",
+        "es": "Activar boost de calefacción Hive"
+      },
+      "description": {
+        "en": "Heat a zone to a temperature for a while, then go back to its mode.",
+        "fr": "Chauffe une zone à une température pendant un temps, puis revient à son mode.",
+        "de": "Heizt eine Zone eine Zeit lang auf eine Temperatur und kehrt dann zum Modus zurück.",
+        "es": "Calienta una zona a una temperatura durante un tiempo y vuelve a su modo."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Heating zone (first one if empty)",
+            "fr": "Zone de chauffage (la première si vide)",
+            "de": "Heizzone (die erste, wenn leer)",
+            "es": "Zona de calefacción (la primera si está vacío)"
+          }
+        },
+        {
+          "key": "duration",
+          "type": "number",
+          "label": {
+            "en": "Duration (min)",
+            "fr": "Durée (min)",
+            "de": "Dauer (Min.)",
+            "es": "Duración (min)"
+          },
+          "default": 30,
+          "min": 15,
+          "max": 360
+        },
+        {
+          "key": "temperature",
+          "type": "number",
+          "label": {
+            "en": "Temperature (°C)",
+            "fr": "Température (°C)",
+            "de": "Temperatur (°C)",
+            "es": "Temperatura (°C)"
+          },
+          "default": 21,
+          "min": 5,
+          "max": 32
+        }
+      ],
+      "outputs": [
+        {
+          "key": "boosted",
+          "type": "boolean",
+          "label": {
+            "en": "Boost started",
+            "fr": "Boost lancé",
+            "de": "Boost gestartet",
+            "es": "Boost iniciado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "cancel_heating_boost",
+      "label": {
+        "en": "Cancel the Hive heating boost",
+        "fr": "Annuler le boost du chauffage Hive",
+        "de": "Hive-Heizungs-Boost beenden",
+        "es": "Cancelar el boost de calefacción Hive"
+      },
+      "description": {
+        "en": "Stop a running heating boost: the zone goes back to its mode.",
+        "fr": "Arrête un boost du chauffage en cours : la zone revient à son mode.",
+        "de": "Beendet einen laufenden Heizungs-Boost: Die Zone kehrt zu ihrem Modus zurück.",
+        "es": "Detiene un boost de calefacción en curso: la zona vuelve a su modo."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Heating zone (first one if empty)",
+            "fr": "Zone de chauffage (la première si vide)",
+            "de": "Heizzone (die erste, wenn leer)",
+            "es": "Zona de calefacción (la primera si está vacío)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "cancelled",
+          "type": "boolean",
+          "label": {
+            "en": "A boost was cancelled",
+            "fr": "Un boost a été annulé",
+            "de": "Ein Boost wurde beendet",
+            "es": "Se ha cancelado un boost"
+          }
+        }
+      ]
+    },
+    {
+      "key": "boost_hot_water",
+      "label": {
+        "en": "Boost the Hive hot water",
+        "fr": "Booster l'eau chaude Hive",
+        "de": "Hive-Warmwasser boosten",
+        "es": "Activar boost de agua caliente Hive"
+      },
+      "description": {
+        "en": "Heat the hot water for a while, then go back to its mode.",
+        "fr": "Chauffe l'eau chaude pendant un temps, puis revient à son mode.",
+        "de": "Erwärmt das Warmwasser eine Zeit lang und kehrt dann zum Modus zurück.",
+        "es": "Calienta el agua durante un tiempo y vuelve a su modo."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Hot water (first one if empty)",
+            "fr": "Eau chaude (la première si vide)",
+            "de": "Warmwasser (das erste, wenn leer)",
+            "es": "Agua caliente (la primera si está vacío)"
+          }
+        },
+        {
+          "key": "duration",
+          "type": "number",
+          "label": {
+            "en": "Duration (min)",
+            "fr": "Durée (min)",
+            "de": "Dauer (Min.)",
+            "es": "Duración (min)"
+          },
+          "default": 30,
+          "min": 15,
+          "max": 360
+        }
+      ],
+      "outputs": [
+        {
+          "key": "boosted",
+          "type": "boolean",
+          "label": {
+            "en": "Boost started",
+            "fr": "Boost lancé",
+            "de": "Boost gestartet",
+            "es": "Boost iniciado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "cancel_hot_water_boost",
+      "label": {
+        "en": "Cancel the Hive hot water boost",
+        "fr": "Annuler le boost de l'eau chaude Hive",
+        "de": "Hive-Warmwasser-Boost beenden",
+        "es": "Cancelar el boost de agua caliente Hive"
+      },
+      "description": {
+        "en": "Stop a running hot water boost: it goes back to its mode.",
+        "fr": "Arrête un boost de l'eau chaude en cours : elle revient à son mode.",
+        "de": "Beendet einen laufenden Warmwasser-Boost: Es kehrt zu seinem Modus zurück.",
+        "es": "Detiene un boost de agua caliente en curso: vuelve a su modo."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Hot water (first one if empty)",
+            "fr": "Eau chaude (la première si vide)",
+            "de": "Warmwasser (das erste, wenn leer)",
+            "es": "Agua caliente (la primera si está vacío)"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "cancelled",
+          "type": "boolean",
+          "label": {
+            "en": "A boost was cancelled",
+            "fr": "Un boost a été annulé",
+            "de": "Ein Boost wurde beendet",
+            "es": "Se ha cancelado un boost"
+          }
+        }
+      ]
+    },
+    {
+      "key": "set_heating_mode",
+      "label": {
+        "en": "Set the Hive heating mode",
+        "fr": "Changer le mode du chauffage Hive",
+        "de": "Hive-Heizmodus einstellen",
+        "es": "Cambiar el modo de calefacción Hive"
+      },
+      "description": {
+        "en": "Schedule, manual (hold a temperature) or off (frost protection).",
+        "fr": "Programme, manuel (maintenir une température) ou arrêt (hors-gel).",
+        "de": "Zeitplan, manuell (Temperatur halten) oder aus (Frostschutz).",
+        "es": "Programa, manual (mantener una temperatura) o apagado (antiheladas)."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Heating zone (first one if empty)",
+            "fr": "Zone de chauffage (la première si vide)",
+            "de": "Heizzone (die erste, wenn leer)",
+            "es": "Zona de calefacción (la primera si está vacío)"
+          }
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "label": {
+            "en": "Mode",
+            "fr": "Mode",
+            "de": "Modus",
+            "es": "Modo"
+          },
+          "required": true,
+          "default": "schedule",
+          "options": [
+            {
+              "value": "schedule",
+              "label": {
+                "en": "Schedule",
+                "fr": "Programme",
+                "de": "Zeitplan",
+                "es": "Programa"
+              }
+            },
+            {
+              "value": "manual",
+              "label": {
+                "en": "Manual",
+                "fr": "Manuel",
+                "de": "Manuell",
+                "es": "Manual"
+              }
+            },
+            {
+              "value": "off",
+              "label": {
+                "en": "Off",
+                "fr": "Arrêt",
+                "de": "Aus",
+                "es": "Apagado"
+              }
+            }
+          ]
+        },
+        {
+          "key": "temperature",
+          "type": "number",
+          "label": {
+            "en": "Temperature in manual mode (°C)",
+            "fr": "Température en mode manuel (°C)",
+            "de": "Temperatur im manuellen Modus (°C)",
+            "es": "Temperatura en modo manual (°C)"
+          },
+          "min": 5,
+          "max": 32
+        }
+      ],
+      "outputs": [
+        {
+          "key": "applied",
+          "type": "boolean",
+          "label": {
+            "en": "Mode applied",
+            "fr": "Mode appliqué",
+            "de": "Modus angewendet",
+            "es": "Modo aplicado"
+          }
+        }
+      ]
+    },
+    {
+      "key": "set_hot_water_mode",
+      "label": {
+        "en": "Set the Hive hot water mode",
+        "fr": "Changer le mode de l'eau chaude Hive",
+        "de": "Hive-Warmwassermodus einstellen",
+        "es": "Cambiar el modo de agua caliente Hive"
+      },
+      "description": {
+        "en": "Schedule, always on or off.",
+        "fr": "Programme, toujours allumée ou arrêt.",
+        "de": "Zeitplan, immer an oder aus.",
+        "es": "Programa, siempre encendida o apagada."
+      },
+      "timeout_seconds": 30,
+      "fields": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Hot water (first one if empty)",
+            "fr": "Eau chaude (la première si vide)",
+            "de": "Warmwasser (das erste, wenn leer)",
+            "es": "Agua caliente (la primera si está vacío)"
+          }
+        },
+        {
+          "key": "mode",
+          "type": "select",
+          "label": {
+            "en": "Mode",
+            "fr": "Mode",
+            "de": "Modus",
+            "es": "Modo"
+          },
+          "required": true,
+          "default": "schedule",
+          "options": [
+            {
+              "value": "schedule",
+              "label": {
+                "en": "Schedule",
+                "fr": "Programme",
+                "de": "Zeitplan",
+                "es": "Programa"
+              }
+            },
+            {
+              "value": "on",
+              "label": {
+                "en": "Always on",
+                "fr": "Toujours allumée",
+                "de": "Immer an",
+                "es": "Siempre encendida"
+              }
+            },
+            {
+              "value": "off",
+              "label": {
+                "en": "Off",
+                "fr": "Arrêt",
+                "de": "Aus",
+                "es": "Apagado"
+              }
+            }
+          ]
+        }
+      ],
+      "outputs": [
+        {
+          "key": "applied",
+          "type": "boolean",
+          "label": {
+            "en": "Mode applied",
+            "fr": "Mode appliqué",
+            "de": "Modus angewendet",
+            "es": "Modo aplicado"
+          }
+        }
+      ]
+    }
+  ],
+  "widgets": [
+    {
+      "key": "hive_heating",
+      "label": {
+        "en": "Hive heating",
+        "fr": "Chauffage Hive",
+        "de": "Hive-Heizung",
+        "es": "Calefacción Hive"
+      },
+      "description": {
+        "en": "Live temperatures, mode, boost and battery of a heating zone, with a boost button.",
+        "fr": "Températures en direct, mode, boost et pile d'une zone, avec un bouton boost.",
+        "de": "Live-Temperaturen, Modus, Boost und Batterie einer Heizzone, mit Boost-Taste.",
+        "es": "Temperaturas en vivo, modo, boost y batería de una zona, con botón de boost."
+      },
+      "icon": "thermometer",
+      "settings": [
+        {
+          "key": "device",
+          "type": "select",
+          "source": "devices",
+          "label": {
+            "en": "Heating zone (first one if empty)",
+            "fr": "Zone de chauffage (la première si vide)",
+            "de": "Heizzone (die erste, wenn leer)",
+            "es": "Zona de calefacción (la primera si está vacío)"
+          }
+        }
+      ],
+      "action_timeout_seconds": 30
+    },
+    {
+      "key": "hive_home",
+      "label": {
+        "en": "Hive home",
+        "fr": "Maison Hive",
+        "de": "Hive-Zuhause",
+        "es": "Hogar Hive"
+      },
+      "description": {
+        "en": "Hot water, lights on, open windows, offline devices and low batteries.",
+        "fr": "Eau chaude, lampes allumées, ouvertures, appareils hors ligne, piles faibles.",
+        "de": "Warmwasser, Lampen an, offene Fenster, Offline-Geräte, schwache Batterien.",
+        "es": "Agua caliente, luces, ventanas abiertas, dispositivos desconectados, baterías."
+      },
+      "icon": "home",
+      "action_timeout_seconds": 30
+    }
+  ]
+}

@@ -1,0 +1,204 @@
+{
+  "user": { "id": "user-1", "timezone": "Europe/London", "temperatureUnit": "C" },
+  "homes": {
+    "homes": [{ "id": "home-1", "name": "Home", "location": { "timeZone": "Europe/London" } }]
+  },
+  "products": [
+    {
+      "id": "heating-1",
+      "type": "heating",
+      "parent": "hub-1",
+      "props": {
+        "online": true,
+        "model": "SLR1",
+        "zone": "boilermodule-1",
+        "working": true,
+        "temperature": 19.23,
+        "previous": { "mode": "SCHEDULE" }
+      },
+      "state": { "name": "Heating Zone 1", "mode": "SCHEDULE", "target": 20, "boost": null }
+    },
+    {
+      "id": "hotwater-1",
+      "type": "hotwater",
+      "parent": "boilermodule-1",
+      "props": { "online": true, "zone": "boilermodule-1", "previous": { "mode": "OFF" } },
+      "state": {
+        "name": "Hotwater",
+        "mode": "SCHEDULE",
+        "boost": null,
+        "status": "OFF",
+        "schedule": {
+          "monday": [
+            { "start": 360, "value": { "status": "ON" } },
+            { "start": 480, "value": { "status": "OFF" } }
+          ],
+          "tuesday": [
+            { "start": 360, "value": { "status": "ON" } },
+            { "start": 480, "value": { "status": "OFF" } }
+          ],
+          "wednesday": [
+            { "start": 360, "value": { "status": "ON" } },
+            { "start": 480, "value": { "status": "OFF" } }
+          ],
+          "thursday": [
+            { "start": 360, "value": { "status": "ON" } },
+            { "start": 480, "value": { "status": "OFF" } }
+          ],
+          "friday": [
+            { "start": 360, "value": { "status": "ON" } },
+            { "start": 480, "value": { "status": "OFF" } }
+          ],
+          "saturday": [{ "start": 420, "value": { "status": "ON" } }],
+          "sunday": [{ "start": 600, "value": { "status": "OFF" } }]
+        }
+      }
+    },
+    {
+      "id": "trvcontrol-1",
+      "type": "trvcontrol",
+      "parent": "hub-1",
+      "props": {
+        "online": true,
+        "temperature": 17.6,
+        "working": false,
+        "trvs": ["trv-1"],
+        "previous": {},
+        "zoneName": "Bedroom"
+      },
+      "state": { "name": "Bedroom", "mode": "MANUAL", "target": 18 }
+    },
+    {
+      "id": "light-1",
+      "type": "warmwhitelight",
+      "parent": "hub-1",
+      "props": { "online": true, "model": "FWBulb01" },
+      "state": { "name": "Hall", "status": "ON", "brightness": 80 }
+    },
+    {
+      "id": "light-2",
+      "type": "tuneablelight",
+      "parent": "hub-1",
+      "props": { "online": true, "colourTemperature": { "min": 2700, "max": 6535 } },
+      "state": { "name": "Kitchen", "status": "OFF", "brightness": 100, "colourTemperature": 4000 }
+    },
+    {
+      "id": "light-3",
+      "type": "colourtuneablelight",
+      "parent": "hub-1",
+      "props": { "online": false, "colourTemperature": { "min": 2700, "max": 6535 } },
+      "state": {
+        "name": "Lounge",
+        "status": "ON",
+        "brightness": 60,
+        "colourMode": "COLOUR",
+        "colourTemperature": 3300,
+        "hue": 0,
+        "saturation": 100,
+        "value": 100
+      }
+    },
+    {
+      "id": "plug-1",
+      "type": "activeplug",
+      "parent": "hub-1",
+      "props": { "online": true, "powerConsumption": 42 },
+      "state": { "name": "Lamp plug", "status": "ON", "mode": "MANUAL" }
+    },
+    {
+      "id": "motion-1",
+      "type": "motionsensor",
+      "parent": "hub-1",
+      "props": {
+        "online": true,
+        "motion": { "status": false },
+        "battery": 80,
+        "temperature": 19.25
+      },
+      "state": { "name": "Landing" }
+    },
+    {
+      "id": "contact-1",
+      "type": "contactsensor",
+      "parent": "hub-1",
+      "props": { "online": true, "status": "CLOSED", "battery": 25 },
+      "state": { "name": "Front door" }
+    }
+  ],
+  "devices": [
+    {
+      "id": "hub-1",
+      "type": "hub",
+      "props": { "online": true, "model": "NANO2", "power": "mains" },
+      "state": { "name": "Hub" }
+    },
+    {
+      "id": "thermostatui-1",
+      "type": "thermostatui",
+      "props": {
+        "online": true,
+        "model": "SLT3",
+        "power": "battery",
+        "battery": 70,
+        "zone": "boilermodule-1"
+      },
+      "state": { "name": "Heating Zone 1" }
+    },
+    {
+      "id": "boilermodule-1",
+      "type": "boilermodule",
+      "props": { "online": true, "model": "SLR1", "power": "mains", "zone": "boilermodule-1" },
+      "state": { "name": "Receiver" }
+    },
+    {
+      "id": "trv-1",
+      "type": "trv",
+      "props": { "online": true, "model": "TRV001", "power": "battery", "battery": 40 },
+      "state": { "name": "Bedroom" }
+    },
+    {
+      "id": "light-1",
+      "type": "warmwhitelight",
+      "props": { "online": true, "model": "FWBulb01", "power": "mains" },
+      "state": { "name": "Hall" }
+    },
+    {
+      "id": "light-2",
+      "type": "tuneablelight",
+      "props": { "online": true, "model": "TWBulb01UK", "power": "mains" },
+      "state": { "name": "Kitchen" }
+    },
+    {
+      "id": "light-3",
+      "type": "colourtuneablelight",
+      "props": { "online": false, "model": "RGBBulb02UK", "power": "mains" },
+      "state": { "name": "Lounge" }
+    },
+    {
+      "id": "plug-1",
+      "type": "activeplug",
+      "props": { "online": true, "model": "SLP2b", "power": "mains" },
+      "state": { "name": "Lamp plug" }
+    },
+    {
+      "id": "motion-1",
+      "type": "motionsensor",
+      "props": { "online": true, "model": "MOT003", "power": "battery", "battery": 80 },
+      "state": { "name": "Landing" }
+    },
+    {
+      "id": "contact-1",
+      "type": "contactsensor",
+      "props": { "online": true, "model": "DWS003", "power": "battery", "battery": 25 },
+      "state": { "name": "Front door" }
+    }
+  ],
+  "actions": [
+    {
+      "id": "action-1",
+      "name": "Front door opened",
+      "enabled": true,
+      "events": [{ "id": "contact-1", "group": "when", "type": "contact-sensor" }]
+    }
+  ]
+}

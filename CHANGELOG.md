@@ -1,0 +1,41 @@
+# Changelog
+
+All notable changes to this integration are documented in this file. The format
+follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
+uses [semantic versioning](https://semver.org/).
+
+Describe each change under `## [Unreleased]` as you make it. The Release
+workflow moves that section under the version it ships, and the section becomes
+the notes of the version's GitHub Release.
+
+## [Unreleased]
+
+## [1.0.0] - 2026-10-16
+
+### Added
+
+- Hive account login (AWS Cognito SRP), with the SMS code confirmation and a
+  remembered device, so later logins and restarts need no new code. The
+  password is never stored nor logged.
+- Heating zones (Active Heating thermostat and radiator valve zones) as Gladys
+  thermostats: temperature, target, mode (schedule / manual / off), heating
+  state, battery.
+- Hot water as a Gladys water heater: mode (schedule / on / off), boost,
+  heating state.
+- Active Light bulbs (warm white, tuneable, colour): on/off, brightness, white
+  temperature, colour.
+- Active Plugs: on/off and power.
+- Motion sensors (motion, temperature, battery) and window / door sensors
+  (opening, battery).
+- Hive actions (automations) as switches enabling or disabling them.
+- Scene triggers: motion detected, door or window opened / closed, boost
+  ended, device online / offline, battery low.
+- Scene actions: heating boost and its cancellation, hot water boost and its
+  cancellation, heating mode, hot water mode.
+- Dashboard widgets: "Hive heating" (one zone, with boost buttons) and "Hive
+  home" (the home at a glance, with the hot water boost).
+- Cloud transport badge: devices Hive reports offline show as unreachable.
+- English, French, German and Spanish texts and documentation.
+
+[Unreleased]: https://github.com/gboulvin/Gladys-Hive/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/gboulvin/Gladys-Hive/releases/tag/v1.0.0
