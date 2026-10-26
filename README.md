@@ -9,7 +9,7 @@ sensors, and the automations of the Hive app.
 
 - **Cloud** integration (manifest `transports: ["cloud"]`): it uses the Hive
   cloud API, the one of the Hive apps.
-- Gladys **5.1.0** or later (scene triggers, scene actions, widgets).
+- Gladys **5.3.0** or later (catalog keywords and countries, scene triggers, scene actions, widgets).
 - English, French, German and Spanish.
 - User documentation: [English](docs/en.md) · [Français](docs/fr.md) ·
   [Deutsch](docs/de.md) · [Español](docs/es.md).
